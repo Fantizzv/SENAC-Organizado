@@ -1,0 +1,43 @@
+-- Primeira tarefa solucionada
+SELECT u.nome, p.valor 
+FROM usuarios u 
+LEFT JOIN pedidos p ON u.id = p.usuario_id
+
+-- Criaçao de coluna para inserçao de dados telefonicos
+ALTER TABLE usuarios
+ADD COLUMN telefone VARCHAR(20);
+
+select * from usuarios;
+
+-- Deletando duplicadas que NAO POSSUEM PEDIDO
+DELETE FROM usuarios u
+WHERE u.id IN (
+    SELECT u2.id
+    FROM usuarios u2
+    INNER JOIN (
+        SELECT email
+        FROM usuarios
+        GROUP BY email
+        HAVING COUNT(*) > 1
+    ) d ON u2.email = d.email
+    LEFT JOIN pedidos p ON u2.id = p.usuario_id
+    WHERE p.usuario_id IS NULL
+);
+
+-- Consulta de usuarios com mais de um grupo 
+SELECT 
+    u.id, 
+    u.nome,
+    STRING_AGG(g.nome_grupo, ', ') AS grupos
+FROM usuarios u
+INNER JOIN usuarios_grupos ug ON u.id = ug.usuario_id
+INNER JOIN grupos g ON ug.grupo_id = g.id
+GROUP BY u.id, u.nome
+HAVING COUNT(ug.grupo_id) > 1
+ORDER BY u.id;
+
+-- adicao de coluna 
+ALTER TABLE pedidos 
+ADD COLUMN status TEXT DEFAULT 'Processando';
+
+select * from pedidos;
