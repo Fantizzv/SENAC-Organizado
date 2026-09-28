@@ -1,0 +1,240 @@
+package com.example.main;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.model.*;
+
+public class Main {
+    public static void main(String[] args) {
+        
+        // 1) Criando produtos que serão usados em toda a demonstração
+        Produto arroz = new Produto("arroz", 10.0, 3);
+        Produto feijao = new Produto("feijão", 8.0, 0);
+        Produto macarrao = new Produto("macarrão", 5.0, 10);
+        Produto acucar = new Produto("açúcar", 4.0, 2);
+
+        List<Produto> produtos = new ArrayList<>();
+        produtos.add(arroz);
+        produtos.add(feijao);
+        produtos.add(macarrao);
+        produtos.add(acucar);
+
+        System.out.println("\n-- Produtos cadastrados no sistema --");
+        for (Produto produto : produtos) {
+            produto.exibirResumo();
+        }
+
+        // 2) Testando o estoque: adicionar e remover itens
+        System.out.println("\n-- Manipulação de estoque --");
+        System.out.println("Adicionar 15 unidades de arroz: " + arroz.adicionarProduto(15));
+        System.out.println("Adicionar 17 unidades de feijão: " + feijao.adicionarProduto(17));
+        System.out.println("Remover 2 unidades de macarrão: " + macarrao.removerProduto(2));
+        System.out.println("Adicionar 5 unidades de açúcar: " + acucar.adicionarProduto(5));
+        System.out.println("Tentativa inválida de adicionar quantidade negativa em feijão: " + feijao.adicionarProduto(-1));
+        System.out.println("Tentativa inválida de remover mais do que existe em açúcar: " + acucar.removerProduto(999));
+
+        System.out.println("\nEstado atual dos produtos:");
+        for (Produto produto : produtos) {
+            produto.exibirResumo();
+        }
+
+        // 3) Verificando se o produto tem estoque e calculando valor total
+        System.out.println("\n-- Consultas do produto --");
+        System.out.println("Arroz tem estoque? " + arroz.temEstoque());
+        System.out.println("Feijão tem estoque? " + feijao.temEstoque());
+        System.out.println("Valor total do arroz em estoque: R$" + String.format("%.2f", arroz.calcularValorTotal()));
+
+        // 4) Buscando produto pelo código
+        Produto produtoEncontrado = arroz.buscarPorCodigo(produtos, macarrao.getCodigo());
+        System.out.println("Busca por código do macarrão: " + (produtoEncontrado != null ? produtoEncontrado.getNome() : "não encontrado"));
+
+        // 5) Aplicando desconto percentual
+        System.out.println("\n-- Desconto percentual --");
+        System.out.println("Aplicar 16,7% no arroz: " + arroz.aplicarDesconto(16.7));
+        System.out.println("Aplicar 0% no feijão: " + feijao.aplicarDesconto(0));
+        System.out.println("Aplicar 25% no açúcar: " + acucar.aplicarDesconto(25));
+
+        // 6) Aplicando desconto fixo
+        System.out.println("\n-- Desconto fixo --");
+        System.out.println("Aplicar R$1,50 de desconto no macarrão: " + macarrao.aplicarDesconto2(1.5, true));
+        System.out.println("Aplicar R$0,50 com parâmetro fixo=false no açúcar: " + acucar.aplicarDesconto2(0.5, false));
+        System.out.println("Aplicar R$999,00 em desconto fixo no arroz: " + arroz.aplicarDesconto2(999, true));
+
+        System.out.println("\nResumo após descontos:");
+        for (Produto produto : produtos) {
+            produto.exibirResumo();
+        }
+
+        // 7) Demonstrando cliente e funcionário
+        System.out.println("\n-- Cliente e funcionário --");
+        Cliente cliente1 = new Cliente("Lucas", "123.456.789-00");
+        Cliente cliente2 = new Cliente("Maria", "987.654.321-00");
+
+        Funcionario funcionario1 = new Funcionario("João", "111.222.333-44");
+        Funcionario funcionario2 = new Funcionario("Ana", "555.666.777-88");
+
+        cliente1.exibirDados();
+        cliente2.exibirDados();
+
+        funcionario1.exibirDados();
+        System.out.println("Matrícula do funcionário: " + funcionario1.getMatricula());
+        funcionario2.exibirDados();
+        System.out.println("Matrícula do funcionário: " + funcionario2.getMatricula());
+
+        // 8) Criando pedidos com clientes e produtos
+        System.out.println("\n-- Pedidos realizados --");
+        Pedido pedido1 = new Pedido(cliente1, arroz, 2);
+        Pedido pedido2 = new Pedido(cliente2, macarrao, 3);
+        Pedido pedido3 = new Pedido(cliente1, acucar, 5);
+
+        List<Pedido> pedidos = new ArrayList<>();
+        pedidos.add(pedido1);
+        pedidos.add(pedido2);
+        pedidos.add(pedido3);
+
+        for (Pedido pedido : pedidos) {
+            System.out.println(
+                    "Pedido " + pedido.getNumero()
+                            + " | Cliente: " + pedido.getCliente().getNome()
+                            + " | Produto: " + pedido.getProduto().getNome()
+                            + " | Quantidade: " + pedido.getQuantidade()
+                            + " | Valor total: R$" + String.format("%.2f", pedido.calcularValorTotal()));
+        }
+
+        System.out.println("Total de pedidos cadastrados: " + Pedido.getTotalPedidos());
+        System.out.println("Total de produtos cadastrados: " + Produto.getTotalProdutos());
+
+
+        
+        ProdutoDigital livroDigital = new ProdutoDigital("Livro", 50.0, 5, 0.03);
+        livroDigital.exibirResumo();
+
+        ProdutoFisico videoGame = new ProdutoFisico("Video Game", 1500.0, 2, 1.5, 20.0);
+        videoGame.exibirResumo();
+
+
+
+
+
+
+
+
+
+        System.out.println("\n-- Comparação de Pagamentos (Base: R$ 100.00) --");
+
+        // 1. Pix (Taxa Zero)
+        PagamentoPix pagamentoPix = new PagamentoPix(100.0);
+        System.out.println("------------------------------------------------");
+        pagamentoPix.processar();
+        System.out.println("Taxa: R$ " + pagamentoPix.calcularTaxa());
+        System.out.println("Total Pix: R$ " + pagamentoPix.calcularValorTotal());
+
+        // 2. Cartão (Taxa Percentual: 5%)
+        PagamentoCartao pagamentoCartao = new PagamentoCartao(100.0, 5.0);
+        System.out.println("------------------------------------------------");
+        pagamentoCartao.processar();
+        System.out.println("Taxa: R$ " + pagamentoCartao.calcularTaxa());
+        System.out.println("Total Cartão: R$ " + pagamentoCartao.calcularValorTotal());
+
+        // 3. Boleto (Taxa Fixa: R$ 3.00)
+        PagamentoBoleto pagamentoBoleto = new PagamentoBoleto(100.0, 3.0);
+        System.out.println("------------------------------------------------");
+        pagamentoBoleto.processar();
+        System.out.println("Taxa Fixa: R$ " + pagamentoBoleto.calcularTaxa());
+        System.out.println("Total Boleto: R$ " + pagamentoBoleto.calcularValorTotal());
+
+
+
+
+
+      
+
+
+
+        List<Pagamento> pagamentos = new ArrayList<>();
+
+        pagamentos.add(new PagamentoBoleto(150.0, 3.0));
+        pagamentos.add(new PagamentoCartao(200.0, 5.0));
+        pagamentos.add(new PagamentoPix(300.0));
+        pagamentos.add(new PagamentoVale(50.0, 100.0));
+        pagamentos.add(new PagamentoBoleto(150.0, 3.0));
+
+
+
+        double somaTotal = 0;
+        for (Pagamento p : pagamentos) {
+            p.processar();
+            System.out.println("Taxa: " + p.calcularTaxa());
+            System.out.println("Total: " + p.calcularValorTotal());
+            System.out.println("-----------------------------");
+            somaTotal += p.calcularValorTotal();
+        }
+
+        System.out.println("Soma final: R$ " + somaTotal);
+
+
+
+
+
+
+
+
+        // PARTE 1 - FILA DE ATENDIMENTO
+        ArrayList<Cliente> filaAtendimento = new ArrayList<>();
+
+        Cliente c1 = new Cliente("Ana", "123456789");
+        Cliente c2 = new Cliente("Bruno", "987654321");
+        Cliente c3 = new Cliente("Carla", "456789123");
+
+        // Adicionando à fila na ordem de chegada
+        filaAtendimento.add(c1);
+        filaAtendimento.add(c2);
+        filaAtendimento.add(c3);
+
+        // Atendendo o primeiro cliente da fila (índice 0)
+        Cliente clienteAtendido = filaAtendimento.remove(0);
+
+        System.out.println("--- PARTE 1: FILA DE ATENDIMENTO ---");
+        System.out.println("Atendido agora: " + clienteAtendido.getNome());
+        System.out.print("Aguardando na fila: ");
+        for (Cliente c : filaAtendimento) {
+            System.out.print(c.getNome() + " ");
+        }
+        System.out.println("\n");
+
+
+        // PARTE 2 - PEDIDOS
+        ProdutoFisico livroFisico = new ProdutoFisico("Livro", 50.0, 1, 0.5, 10.0);
+        ProdutoDigital notebook = new ProdutoDigital("Notebook", 40.0, 2, 5.0);
+
+        Pedido pedidoLivro = new Pedido(clienteAtendido, livroFisico, 1);
+        Pedido pedidoNotebook = new Pedido(clienteAtendido, notebook, 2);
+        double totalPedidos = pedidoLivro.calcularValorTotal() + pedidoNotebook.calcularValorTotal();
+
+        System.out.println("--- PARTE 2: PEDIDO ---");
+        System.out.println("Cliente dos pedidos: " + clienteAtendido.getNome());
+        System.out.println("Livro: " + pedidoLivro.getQuantidade() + " unidade(s) - R$ " + pedidoLivro.calcularValorTotal());
+        System.out.println("Notebook: " + pedidoNotebook.getQuantidade() + " unidade(s) - R$ " + pedidoNotebook.calcularValorTotal());
+        System.out.println("Total dos pedidos: R$ " + totalPedidos);
+        System.out.println();
+
+
+        // PARTE 3 - HISTÓRICO
+        ArrayList<String> historico = new ArrayList<>();
+
+
+        // Registrando os itens específicos no histórico:
+        historico.add("Item adicionado: " + livroFisico.getNome() + " (Qtd: " + pedidoLivro.getQuantidade() + ")");
+        historico.add("Item adicionado: " + notebook.getNome() + " (Qtd: " + pedidoNotebook.getQuantidade() + ")");
+        historico.add("Pedidos finalizados para " + clienteAtendido.getNome() + " no valor total de R$ " + totalPedidos);
+
+        System.out.println("--- PARTE 3: HISTÓRICO ---");
+        for (String resumoItens : historico) {
+            System.out.println("- " + resumoItens);
+        }
+
+        
+    }
+}
+

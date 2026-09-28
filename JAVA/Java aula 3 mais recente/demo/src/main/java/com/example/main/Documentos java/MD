@@ -1,0 +1,138 @@
+# UC6 — Modelo de dicionário de dados
+
+**Projeto Integrador:** Análise de dados de uma clínica fictícia  
+**Estudante:** Victor Fanti  
+**Turma:** 102  
+**Data:** 11 / 09 / 2026
+
+## Orientações
+
+1. Use o DBeaver e o DER gerado a partir do schema `clinica_pi_uc6`.
+2. Preencha o dicionário com suas próprias palavras; não basta copiar apenas o tipo técnico do campo.
+3. Registre todos os campos das tabelas. Priorize a explicação dos campos que serão úteis nas análises do projeto.
+4. Em **Chave/relacionamento**, informe `PK` para chave primária e `FK -> tabela(campo)` para chave estrangeira. Nos demais campos, use `—`.
+5. Salve o arquivo com o nome `dicionario-dados-nome-sobrenome.md` e entregue junto ao DER exportado pelo DBeaver.
+
+## Legenda rápida
+
+| Sigla | Significado |
+|---|---|
+| PK | Chave primária: identifica unicamente cada registro. |
+| FK | Chave estrangeira: aponta para um registro de outra tabela. |
+| Obrigatório | Campo que não aceita valor vazio (`NOT NULL`). |
+| Regra | Restrição, valor padrão ou conjunto de valores aceitos pelo banco. |
+
+## 1. Visão geral das tabelas
+
+| Tabela | Função da tabela no sistema | Classificação: operacional ou apoio? |
+|---|---|---|
+| `especialidade` | Explicar qual a função de cada especialidade no hospital. (Cardiologia, pediatria). | Apoio |
+| `convenio` | Indicar de qual convênio o paciente tem plano médico. (Particular, empresarial). | Apoio |
+| `consultorio` | Organizar as consultas em consultórios e andares do prédio específicos pois cada um serve trabalhos diferentes. | Apoio |
+| `profissional` | Especificar nome e especialidade do médico. (Maria: Psicologia, Ana: Ortopedia). | Operacional |
+| `paciente` | Organizar por nome, data de nascimento, sexo, idade, convênio e cadastro cada paciente e seu chamado para alguma consulta | Operacional |
+| `consulta` | Atender aos dados cadastrados pelo cliente dando a ele as opções das especialidades fornecidas pelo hospital. Após isso, organizar cada cliente em seu respectivo consultório, profissional e data e hora de sua consulta | Operacional |
+
+## 2. Campos da tabela `especialidade`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_especialidade` | int4 | Sim | PK | Código único para cada área. |  |
+| `nome` | varchar(80) | Sim |  | Nome da especialidade médica. (Clínico geral, pediatria). |  |
+| `descricao` | varchar(255) | Não |  | Explicação sobre para que serve cada especialidade. |  |
+
+## 3. Campos da tabela `convenio`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_convenio` | int4 | Sim | PK | Código único para cada convênio. |  |
+| `nome` | varchar(80) | Sim |  | Nome do convênio cadastrado. |  |
+| `tipo` | varchar(20) | Sim |  | Qual o convênio: particular, empresarial, saúde |  |
+| `ativo` | bool | Sim |  | Se o convênio do paciente esta ativo ou inativo para o hospital. |  |
+
+## 4. Campos da tabela `consultorio`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_consultorio` | int4 | Sim | PK | Código único para cada consultório. |  |
+| `nome` | varchar(50) | Sim |  | Qual o número do consúltorio que esta agendada a consulta. |  |
+| `andar` | int2 | Sim |  | Qual andar que está o consultório. |  |
+| `capacidade` | int2 | Não |  | Quantas pessoas são autorizadas por consulta. |  |
+| `ativo` | bool | Sim |  | Se a consulta agendada está ativa ou inativa. |  |
+
+## 5. Campos da tabela `profissional`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_profissional` | int4 | Sim | PK | Código único para cada profissional. |  |
+| `nome` | varchar(120) | Sim |  | Nome dos médicos trabalhando no hospital. |  |
+| `registro_profissional` | varchar(30) | Sim |  | Código/assinatura de cada profissional. |  |
+| `id_especialidade` | int4 | Sim | FK | Código específico para cada médico e a área em que atua. |  |
+| `data_admissao` | date | Sim |  | Data em que foi cadastrado a consulta. |  |
+| `ativo` | bool | Sim |  | Indica se o profissional está ativo ou inativo. |  |
+
+## 6. Campos da tabela `paciente`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_paciente` | int4 | Sim | PK | Código específico para cada paciente. |  |
+| `nome` | varchar(120) | Sim |  | Lista em ordem crescente de todos os pacientes. |  |
+| `data_nascimento` | date | Sim |  | Data de nascimento do paciente. |  |
+| `sexo` | bpchar(1) | Não |  | Gênero do paciente. |  |
+| `cidade` | varchar(80) | Não |  | Cidade em que o paciente mora. |  |
+| `id_convenio` | int4 | Sim | FK | Código para qual convênio o paciente cadastrou (1: privado, 2: empresarial). |  |
+| `data_cadastro` | date | Sim |  | Data do cadastro da consulta. |  |
+| `ativo` | bool | Sim |  | Se o cliente está ativo ou inativo na consulta. |  |
+
+## 7. Campos da tabela `consulta`
+
+| Campo | Tipo no banco | Obrigatório? | Chave/relacionamento | Significado para o negócio | Regra ou observação |
+|---|---|---|---|---|---|
+| `id_consulta` | int8 | Sim | PK | Código único de cada consulta. |  |
+| `id_paciente` | int4 | Sim | FK | Código único de cada paciente. |  |
+| `id_profissional` | int4 | Sim | FK | Código único de cada profissional. |  |
+| `id_consultorio` | int4 | Sim | FK | Código único de cada consultório. |
+| `data_agendamento` | timestamp | Sim |  | Dia em que o paciente agendou a consulta. |  |
+| `data_hora_consulta` | timestamp | Sim |  | Hórario que está agendada a consulta. |  |
+| `status` | varchar(15) | Sim |  | Indica se a consulta foi realizada ou se o paciente faltou. |  |
+| `tipo_atendimento` | varchar(20) | Sim |  | Mostra que o atendimento é presencial. |  |
+| `valor_cobrado` | numeric(10, 2) | Sim |  | Valor cobrado pela consulta. |  |
+| `inicio_atendimento` | timestamp | Não |  | Horário do início da consulta. |  |
+| `fim_atendimento` | timestamp | Não |  | Horário do final da consulta. |  |
+| `observacao` | varchar(255) | Sim |  | Observação feita pelo médico para o paciente. |  |
+
+## 8. Relacionamentos identificados
+
+| Tabela de origem | Campo FK | Tabela de destino | Campo referenciado | Cardinalidade percebida | Explicação em linguagem de negócio |
+|---|---|---|---|---|---|
+| profissional | id_especialidade | especialidade | id_especialidade | N:1 | Um profissional possui uma especialidade principal, mas uma especialidade pode pertencer a vários profissionais. |
+| consulta | id_paciente | paciente | id_paciente | N:1 | Um paciente pode realizar várias consultas, mas cada agendamento pertence a apenas um paciente. |
+| consulta | id_profissional | profissional | id_profissional | N:1 | Um profissional realiza diversos atendimentos, mas cada consulta é conduzida por um único médico. |
+| consulta | id_consultorio | consultório | id_consultorio | N:1 | Um consultório recebe várias consultas ao longo do dia, mas cada consulta ocorre em uma sala específica. |
+| consulta | id_convenio | convênio | id_convenio | N:1 | Um convênio pode cobrir diversos atendimentos, mas cada consulta é cobrada por apenas um convênio ou particular. |
+
+## 9. Análise inicial
+
+1. Qual tabela registra o fato principal que será analisado no projeto? Por quê?  
+   Qual tabela registra o fato principal que será analisado no projeto? Por quê?
+A tabela consulta. Ela é a tabela transacional (operacional) central do modelo, onde ocorrem os eventos de negócio da clínica. Nela ficam registrados cada agendamento, o paciente atendido, o médico responsável, a data/horário, o valor e o status do atendimento.
+
+2. Cite três campos que podem ajudar a responder perguntas sobre atendimentos, faltas ou demanda.  
+   data_consulta (ou data_hora): permite analisar a demanda ao longo do tempo, picos de atendimento por dia/horário e sazonalidade.
+
+status (ou situacao): permite identificar se o atendimento foi realizado, cancelado ou se o paciente faltou (no-show).
+
+id_especialidade (ou id_profissional / id_convenio): permite mensurar qual especialidade ou plano possui maior demanda de consultas.
+
+3. Cite duas dúvidas, inconsistências ou regras da base que precisam ser verificadas antes de analisar os dados.  
+  Padronização do campo de status: verificar quais são os valores aceitos (ex.: 'Realizada', 'Cancelada', 'Falta', 'Agendada') e se existem registros nulos ou digitados incorretamente.
+
+Integridade de datas e horários: conferir se existem consultas registradas com datas futuras marcadas como 'Realizada' ou agendamentos em horários fora do funcionamento da clínica.
+
+## Checklist antes da entrega
+
+- [x] Preenchi todos os campos das seis tabelas.
+- [x] Marquei corretamente as PKs e FKs.
+- [x] Expliquei os relacionamentos em linguagem de negócio.
+- [x] Registrei regras importantes, como valores permitidos e obrigatoriedade.
+- [x] Anexei ou salvei o DER exportado pelo DBeaver.
